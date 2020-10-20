@@ -17,7 +17,14 @@
     "lint": "tsdx lint",
     "prepare": "tsdx build",
     "size": "size-limit",
-    "analyze": "size-limit --why"
+    "analyze": "size-limit --why",
+    "pegjs": "pegjs -o src/ccg.reader.js src/ccg.pegjs"
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/{!(ccg.reader),}.js",
+      "src/**/*.ts"
+    ]
   },
   "peerDependencies": {},
   "husky": {
