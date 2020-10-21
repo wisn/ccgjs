@@ -1,6 +1,9 @@
-export const sum = (a: number, b: number) => {
-  if ('development' === process.env.NODE_ENV) {
-    console.log('boop');
-  }
-  return a + b;
+import Reader, * as ReaderTypes from './ccg.reader';
+import Tree, * as TreeTypes from './ccg.tree';
+
+export default {
+  Reader,
+  ReaderTypes,
+  Tree,
+  TreeTypes,
 };
