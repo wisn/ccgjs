@@ -1,28 +1,23 @@
-import { parse } from '../src/ccg.reader.js';
+import CCG from '../src/';
 
 describe('ccg.reader', () => {
   it("won't compile a single wild node", () => {
     const str = '(<T S 0 0>)';
-    try {
-      parse(str);
-      expect('').toEqual('must not compile');
-    } catch {
-      expect(true).toBeTruthy();
-    }
+    const reader = new CCG.Reader(str);
+
+    expect(reader.read()).toBeFalsy();
   });
 
   it("won't compile a single leaf node", () => {
     const str = '(<L NP NNP NNP Wisnu NP>)';
-    try {
-      parse(str);
-      expect('').toEqual('must not compile');
-    } catch {
-      expect(true).toBeTruthy();
-    }
+    const reader = new CCG.Reader(str);
+
+    expect(reader.read()).toBeFalsy();
   });
 
   it('compiles CCG tree with a single leaf', () => {
     const str = '(<T S 0 1> (<L S/NP NNP NNP Wisnu NP>))';
+    const reader = new CCG.Reader(str);
     const tree = {
       node: {
         type: 'T',
@@ -31,16 +26,18 @@ describe('ccg.reader', () => {
         dtrs: 1,
       },
       left: {
-        type: 'L',
-        ccgCat: 'S/NP',
-        modPOSTag: 'NNP',
-        origPOSTag: 'NNP',
-        word: 'Wisnu',
-        predArgCat: 'NP',
+        node: {
+          type: 'L',
+          ccgCat: 'S/NP',
+          modPOSTag: 'NNP',
+          origPOSTag: 'NNP',
+          word: 'Wisnu',
+          predArgCat: 'NP',
+        },
       },
     };
 
-    expect(parse(str)).toStrictEqual(tree);
+    expect(reader.read()).toStrictEqual(tree);
   });
 
   it('compiles CCG tree with two leaves', () => {
@@ -49,6 +46,7 @@ describe('ccg.reader', () => {
       '(<L S/NP PSP PSP Hi NP>)',
       '(<L NP NNP NNP Wisnu NP>))',
     ].join(' ');
+    const reader = new CCG.Reader(str);
     const tree = {
       node: {
         type: 'T',
@@ -57,24 +55,28 @@ describe('ccg.reader', () => {
         dtrs: 2,
       },
       left: {
-        type: 'L',
-        ccgCat: 'S/NP',
-        modPOSTag: 'PSP',
-        origPOSTag: 'PSP',
-        word: 'Hi',
-        predArgCat: 'NP',
+        node: {
+          type: 'L',
+          ccgCat: 'S/NP',
+          modPOSTag: 'PSP',
+          origPOSTag: 'PSP',
+          word: 'Hi',
+          predArgCat: 'NP',
+        },
       },
       right: {
-        type: 'L',
-        ccgCat: 'NP',
-        modPOSTag: 'NNP',
-        origPOSTag: 'NNP',
-        word: 'Wisnu',
-        predArgCat: 'NP',
+        node: {
+          type: 'L',
+          ccgCat: 'NP',
+          modPOSTag: 'NNP',
+          origPOSTag: 'NNP',
+          word: 'Wisnu',
+          predArgCat: 'NP',
+        },
       },
     };
 
-    expect(parse(str)).toStrictEqual(tree);
+    expect(reader.read()).toStrictEqual(tree);
   });
 
   it('compiles left leaf and right tree (single leaf)', () => {
@@ -83,6 +85,7 @@ describe('ccg.reader', () => {
       '(<L NP NNP NNP Wisnu NP>)',
       '(<T S/NP 0 1> (<L S/NP PSP PSP pergi S/NP>)))',
     ].join(' ');
+    const reader = new CCG.Reader(str);
     const tree = {
       node: {
         ccgCat: 'S',
@@ -91,12 +94,14 @@ describe('ccg.reader', () => {
         type: 'T',
       },
       left: {
-        ccgCat: 'NP',
-        modPOSTag: 'NNP',
-        origPOSTag: 'NNP',
-        predArgCat: 'NP',
-        type: 'L',
-        word: 'Wisnu',
+        node: {
+          ccgCat: 'NP',
+          modPOSTag: 'NNP',
+          origPOSTag: 'NNP',
+          predArgCat: 'NP',
+          type: 'L',
+          word: 'Wisnu',
+        },
       },
       right: {
         node: {
@@ -106,17 +111,19 @@ describe('ccg.reader', () => {
           type: 'T',
         },
         left: {
-          ccgCat: 'S/NP',
-          modPOSTag: 'PSP',
-          origPOSTag: 'PSP',
-          predArgCat: 'S/NP',
-          type: 'L',
-          word: 'pergi',
+          node: {
+            ccgCat: 'S/NP',
+            modPOSTag: 'PSP',
+            origPOSTag: 'PSP',
+            predArgCat: 'S/NP',
+            type: 'L',
+            word: 'pergi',
+          },
         },
       },
     };
 
-    expect(parse(str)).toStrictEqual(tree);
+    expect(reader.read()).toStrictEqual(tree);
   });
 
   it('compiles left leaf and right tree (two leaves)', () => {
@@ -126,6 +133,7 @@ describe('ccg.reader', () => {
       '(<T S/NP 0 2> (<L NP PSP PSP pergi NP>)',
       '(<L NP/NP PSP PSP jauh NP/NP>)))',
     ].join(' ');
+    const reader = new CCG.Reader(str);
     const tree = {
       node: {
         ccgCat: 'S',
@@ -134,12 +142,14 @@ describe('ccg.reader', () => {
         type: 'T',
       },
       left: {
-        ccgCat: 'NP',
-        modPOSTag: 'NNP',
-        origPOSTag: 'NNP',
-        predArgCat: 'NP',
-        type: 'L',
-        word: 'Wisnu',
+        node: {
+          ccgCat: 'NP',
+          modPOSTag: 'NNP',
+          origPOSTag: 'NNP',
+          predArgCat: 'NP',
+          type: 'L',
+          word: 'Wisnu',
+        },
       },
       right: {
         node: {
@@ -149,25 +159,29 @@ describe('ccg.reader', () => {
           type: 'T',
         },
         left: {
-          ccgCat: 'NP',
-          modPOSTag: 'PSP',
-          origPOSTag: 'PSP',
-          predArgCat: 'NP',
-          type: 'L',
-          word: 'pergi',
+          node: {
+            ccgCat: 'NP',
+            modPOSTag: 'PSP',
+            origPOSTag: 'PSP',
+            predArgCat: 'NP',
+            type: 'L',
+            word: 'pergi',
+          },
         },
         right: {
-          ccgCat: 'NP/NP',
-          modPOSTag: 'PSP',
-          origPOSTag: 'PSP',
-          predArgCat: 'NP/NP',
-          type: 'L',
-          word: 'jauh',
+          node: {
+            ccgCat: 'NP/NP',
+            modPOSTag: 'PSP',
+            origPOSTag: 'PSP',
+            predArgCat: 'NP/NP',
+            type: 'L',
+            word: 'jauh',
+          },
         },
       },
     };
 
-    expect(parse(str)).toStrictEqual(tree);
+    expect(reader.read()).toStrictEqual(tree);
   });
 
   it('compiles left tree (single leaf) and right leaf', () => {
@@ -176,6 +190,7 @@ describe('ccg.reader', () => {
       '(<T S/NP 0 1> (<L S/NP NNP NNP Wisnu S/NP>))',
       '(<L NP PSP PSP pergi NP>))',
     ].join(' ');
+    const reader = new CCG.Reader(str);
     const tree = {
       node: {
         ccgCat: 'S',
@@ -191,25 +206,29 @@ describe('ccg.reader', () => {
           type: 'T',
         },
         left: {
-          ccgCat: 'S/NP',
-          modPOSTag: 'NNP',
-          origPOSTag: 'NNP',
-          predArgCat: 'S/NP',
-          type: 'L',
-          word: 'Wisnu',
+          node: {
+            ccgCat: 'S/NP',
+            modPOSTag: 'NNP',
+            origPOSTag: 'NNP',
+            predArgCat: 'S/NP',
+            type: 'L',
+            word: 'Wisnu',
+          },
         },
       },
       right: {
-        ccgCat: 'NP',
-        modPOSTag: 'PSP',
-        origPOSTag: 'PSP',
-        predArgCat: 'NP',
-        type: 'L',
-        word: 'pergi',
+        node: {
+          ccgCat: 'NP',
+          modPOSTag: 'PSP',
+          origPOSTag: 'PSP',
+          predArgCat: 'NP',
+          type: 'L',
+          word: 'pergi',
+        },
       },
     };
 
-    expect(parse(str)).toStrictEqual(tree);
+    expect(reader.read()).toStrictEqual(tree);
   });
 
   it('compiles left tree (two leaves) and right leaf', () => {
@@ -220,6 +239,7 @@ describe('ccg.reader', () => {
       '(<L NP PSP PSP pergi NP>))',
       '(<L NP PSP PSP jauh NP>))',
     ].join(' ');
+    const reader = new CCG.Reader(str);
     const tree = {
       node: {
         ccgCat: 'S',
@@ -235,33 +255,39 @@ describe('ccg.reader', () => {
           type: 'T',
         },
         left: {
-          ccgCat: '(S/NP)\\NP',
-          modPOSTag: 'NNP',
-          origPOSTag: 'NNP',
-          predArgCat: '(S/NP)\\NP',
-          type: 'L',
-          word: 'Wisnu',
+          node: {
+            ccgCat: '(S/NP)\\NP',
+            modPOSTag: 'NNP',
+            origPOSTag: 'NNP',
+            predArgCat: '(S/NP)\\NP',
+            type: 'L',
+            word: 'Wisnu',
+          },
         },
         right: {
+          node: {
+            ccgCat: 'NP',
+            modPOSTag: 'PSP',
+            origPOSTag: 'PSP',
+            predArgCat: 'NP',
+            type: 'L',
+            word: 'pergi',
+          },
+        },
+      },
+      right: {
+        node: {
           ccgCat: 'NP',
           modPOSTag: 'PSP',
           origPOSTag: 'PSP',
           predArgCat: 'NP',
           type: 'L',
-          word: 'pergi',
+          word: 'jauh',
         },
-      },
-      right: {
-        ccgCat: 'NP',
-        modPOSTag: 'PSP',
-        origPOSTag: 'PSP',
-        predArgCat: 'NP',
-        type: 'L',
-        word: 'jauh',
       },
     };
 
-    expect(parse(str)).toStrictEqual(tree);
+    expect(reader.read()).toStrictEqual(tree);
   });
 
   it('compiles the real coarse-grained CCG tree', () => {
@@ -280,6 +306,7 @@ describe('ccg.reader', () => {
       '(<L NP NN NN kitaab NP>))',
       '(<L ((Sf\\NP)\\NP)\\NP VM VM dii ((Sf\\NP)\\NP)\\NP>))))',
     ].join(' ');
+    const reader = new CCG.Reader(str);
     const tree = {
       node: {
         type: 'T',
@@ -295,20 +322,24 @@ describe('ccg.reader', () => {
           dtrs: 2,
         },
         left: {
-          type: 'L',
-          ccgCat: 'NP',
-          modPOSTag: 'NNP',
-          origPOSTag: 'NNP',
-          word: 'raam',
-          predArgCat: 'NP',
+          node: {
+            type: 'L',
+            ccgCat: 'NP',
+            modPOSTag: 'NNP',
+            origPOSTag: 'NNP',
+            word: 'raam',
+            predArgCat: 'NP',
+          },
         },
         right: {
-          type: 'L',
-          ccgCat: 'NP\\NP',
-          modPOSTag: 'PSP',
-          origPOSTag: 'PSP',
-          word: 'ne',
-          predArgCat: 'NP\\NP',
+          node: {
+            type: 'L',
+            ccgCat: 'NP\\NP',
+            modPOSTag: 'PSP',
+            origPOSTag: 'PSP',
+            word: 'ne',
+            predArgCat: 'NP\\NP',
+          },
         },
       },
       right: {
@@ -326,20 +357,24 @@ describe('ccg.reader', () => {
             dtrs: 2,
           },
           left: {
-            type: 'L',
-            ccgCat: 'NP',
-            modPOSTag: 'NNP',
-            origPOSTag: 'NNP',
-            word: 'mohan',
-            predArgCat: 'NP',
+            node: {
+              type: 'L',
+              ccgCat: 'NP',
+              modPOSTag: 'NNP',
+              origPOSTag: 'NNP',
+              word: 'mohan',
+              predArgCat: 'NP',
+            },
           },
           right: {
-            type: 'L',
-            ccgCat: 'NP\\NP',
-            modPOSTag: 'PSP',
-            origPOSTag: 'PSP',
-            word: 'ko',
-            predArgCat: 'NP\\NP',
+            node: {
+              type: 'L',
+              ccgCat: 'NP\\NP',
+              modPOSTag: 'PSP',
+              origPOSTag: 'PSP',
+              word: 'ko',
+              predArgCat: 'NP\\NP',
+            },
           },
         },
         right: {
@@ -357,35 +392,41 @@ describe('ccg.reader', () => {
               dtrs: 2,
             },
             left: {
-              type: 'L',
-              ccgCat: 'NP/NP',
-              modPOSTag: 'JJ',
-              origPOSTag: 'JJ',
-              word: 'niilii',
-              predArgCat: 'NP/NP',
+              node: {
+                type: 'L',
+                ccgCat: 'NP/NP',
+                modPOSTag: 'JJ',
+                origPOSTag: 'JJ',
+                word: 'niilii',
+                predArgCat: 'NP/NP',
+              },
             },
             right: {
-              type: 'L',
-              ccgCat: 'NP',
-              modPOSTag: 'NN',
-              origPOSTag: 'NN',
-              word: 'kitaab',
-              predArgCat: 'NP',
+              node: {
+                type: 'L',
+                ccgCat: 'NP',
+                modPOSTag: 'NN',
+                origPOSTag: 'NN',
+                word: 'kitaab',
+                predArgCat: 'NP',
+              },
             },
           },
           right: {
-            type: 'L',
-            ccgCat: '((Sf\\NP)\\NP)\\NP',
-            modPOSTag: 'VM',
-            origPOSTag: 'VM',
-            word: 'dii',
-            predArgCat: '((Sf\\NP)\\NP)\\NP',
+            node: {
+              type: 'L',
+              ccgCat: '((Sf\\NP)\\NP)\\NP',
+              modPOSTag: 'VM',
+              origPOSTag: 'VM',
+              word: 'dii',
+              predArgCat: '((Sf\\NP)\\NP)\\NP',
+            },
           },
         },
       },
     };
 
-    expect(parse(str)).toStrictEqual(tree);
+    expect(reader.read()).toStrictEqual(tree);
   });
 
   it("won't compile the real malformed CCG tree", () => {
@@ -404,11 +445,8 @@ describe('ccg.reader', () => {
       '(<L NP NN NN kitaab NP>))',
       '(<L ((Sf\\NP)\\NP)\\NP VM VM dii ((Sf\\NP)\\NP)\\NP>)))))',
     ].join(' ');
-    try {
-      parse(str);
-      expect('').toEqual('must not compile');
-    } catch {
-      expect(true).toBeTruthy();
-    }
+    const reader = new CCG.Reader(str);
+
+    expect(reader.read()).toBeFalsy();
   });
 });

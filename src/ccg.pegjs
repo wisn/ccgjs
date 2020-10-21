@@ -6,14 +6,14 @@
 
 Tree
   = "(" node:NodeT _ left:Tree _ right:Tree ")" { return { node, left, right }; }
-  / "(" node:NodeT _ left:Tree _ "(" right:NodeL ")" ")" { return { node, left, right }; }
-  / "(" node:NodeT _ "(" left:NodeL ")" _ right:Tree ")" { return { node, left, right }; }
+  / "(" node:NodeT _ left:Tree _ "(" c:NodeL ")" ")" { return { node, left, right: { node: c } }; }
+  / "(" node:NodeT _ "(" c:NodeL ")" _ right:Tree ")" { return { node, left: { node: c }, right }; }
   / "(" node:NodeT _ left:Tree ")" { return { node, left }; }
   / "(" node:NodeT _ c:Node ")" { return { node, ...c }; }
 
 Node
-  = "(" c1:NodeL ")" _ "(" c2:NodeL ")" { return { left: c1, right: c2 }; }
-  / "(" c:NodeL ")" { return { left: c }; }
+  = "(" c1:NodeL ")" _ "(" c2:NodeL ")" { return { left: { node: c1 }, right: { node: c2 } }; }
+  / "(" c:NodeL ")" { return { left: { node: c } }; }
 
 NodeT
   = "<T" _ ccgCat:CCGCat _ head:Head _ dtrs:Dtrs ">" {

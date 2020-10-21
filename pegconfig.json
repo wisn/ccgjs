@@ -1,0 +1,6 @@
+{
+  "tspegjs": {
+    "noTslint": true,
+    "customHeader": "// @ts-nocheck"
+  }
+}
