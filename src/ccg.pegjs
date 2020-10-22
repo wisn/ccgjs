@@ -1,6 +1,6 @@
 {
   function int(x) {
-  	return parseInt(x, 10);
+    return parseInt(x, 10);
   }
 }
 

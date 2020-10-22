@@ -22,7 +22,7 @@ Read and then parse machine-readable CCG derivation into a JavaScript object.
 Usage:
 
 ```javascript
-const str = '(<T S 0 2> (<L S/NP PSP PSP Hi NP>) (<L NP NNP NNP Wisnu NP>))';
+const str = '(<T S 0 2> (<L S/NP PSP PSP Hi S/NP>) (<L NP NNP NNP Wisnu NP>))';
 const reader = new CCG.Reader(str);
 if (reader.read()) {
   console.log(reader.result);
@@ -46,7 +46,7 @@ The returned object looks like this:
       modPOSTag: 'PSP',
       origPOSTag: 'PSP',
       word: 'Hi',
-      predArgCat: 'NP',
+      predArgCat: 'S/NP',
     },
   },
   right: {
@@ -78,7 +78,7 @@ use.
 Usage:
 
 ```javascript
-const str = '(<T S 0 2> (<L S/NP PSP PSP Hi NP>) (<L NP NNP NNP Wisnu NP>))';
+const str = '(<T S 0 2> (<L S/NP PSP PSP Hi S/NP>) (<L NP NNP NNP Wisnu NP>))';
 const tree = new CCG.Tree(str);
 console.log(tree);
 ```
@@ -90,9 +90,12 @@ Tree {
   metadata: {
     isParsed: true,
     sentence: 'Hi Wisnu',
+    words: [ 'Hi', 'Wisnu' ],
+    ccgCats: [ 'S/NP', 'NP' ],
+    height: 2,
     nodes: [ [Object], [Object], [Object] ]
   },
-  mappedWords: { Hi: { value: [Object] }, Wisnu: { value: [Object] } },
+  mappedIndexedWords: { '0': { value: [Object] }, '1': { value: [Object] } },
   root: {
     value: { type: 'T', ccgCat: 'S', head: 0, dtrs: 2 },
     left: { value: [Object] },
@@ -102,14 +105,46 @@ Tree {
 ```
 
 For more information about the omitted `[Object]`,
-see `CCG.TreeTypes.Metadata`, `CCG.TreeTypes.WordMapper`, and
+see `CCG.TreeTypes.Metadata`, `CCG.TreeTypes.IndexedWordMapper`, and
 `CCG.TreeTypes.Node`.
 
+#### toString
+
 We can also turn the tree back into machine-readable CCG derivation by doing
-`tree.toString()`. The returned string will be:
+`tree.toString()`. The returned `string` will be:
 
 ```
-(<T S 0 2> (<L S/NP PSP PSP Hi NP>) (<L NP NNP NNP Wisnu NP>))
+(<T S 0 2> (<L S/NP PSP PSP Hi S/NP>) (<L NP NNP NNP Wisnu NP>))
+```
+
+#### buildDerivations
+
+It is possible to get the structured CCG derivation based on the
+`CCG.TreeTypes.Node` simply by doing `tree.buildDerivations()`.
+The returned `Array<Array<CCG.TreeTypes.Derivation>>` will be:
+
+```
+[
+  [
+    { from: 0, to: 0, ccgCat: 'S/NP' },
+    { from: 1, to: 1, ccgCat: 'NP' }
+  ],
+  [ { from: 0, to: 1, ccgCat: 'S', opr: '>' } ]
+]
+```
+
+How to read?
+
+In the `CCG.TreeTypes.Metadata`, we may find `words` key. In this example,
+it will be `['Hi', 'Wisnu']`. Meaning that word `Hi` is at `0` index and
+word `Wisnu` is at `1` index. We may read it as:
+
+```
+  Hi     Wisnu
+------ ---------
+ S/NP     NP
+--------------->
+       S
 ```
 
 ## Unavailable API
