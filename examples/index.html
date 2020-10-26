@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>CCGjs Example</title>
+    <meta name="description" content="A simple example of CCGjs usage.">
+    <style type="text/css">
+      main {
+        width: 100vw;
+      }
+
+      .ccgjs {
+        border-spacing: .5em;
+        font-size: 12pt;
+        margin: 2em auto;
+      }
+
+      .ccgjs-words, .ccgjs-derivation {
+        text-align: center;
+      }
+
+      .ccgjs-words {
+        font-family: Arial;
+        font-size: 14pt;
+        font-weight: 900;
+      }
+
+      .ccgjs-derivation {
+        font-family: Courier New;
+        font-size: 12pt;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="main"></div>
+  </body>
+  <script type="text/javascript" src="/umd/ccgjs.min.js"></script>
+  <script type="text/javascript">
+    const { CCG } = ccgjs;
+
+    const str = [
+      '(<T Sf 1 2>',
+      '  (<T NP 0 2>',
+      '    (<L NP NNP NNP raam NP>)',
+      '    (<L NP\\NP PSP PSP ne NP\\NP>))',
+      '  (<T Sf\\NP 1 2>',
+      '    (<T NP 0 2>',
+      '      (<L NP NNP NNP mohan NP>)',
+      '      (<L NP\\NP PSP PSP ko NP\\NP>))',
+      '    (<T (Sf\\NP)\\NP 1 2>',
+      '      (<T NP 1 2>',
+      '        (<L NP/NP JJ JJ niilii NP/NP>)',
+      '        (<L NP NN NN kitaab NP>))',
+      '      (<L ((Sf\\NP)\\NP)\\NP VM VM dii ((Sf\\NP)\\NP)\\NP>))))',
+    ].join('\n');
+    const ccg = new CCG.DOM(str);
+    const table = ccg.createTable();
+
+    document.getElementsByClassName('main')[0].appendChild(table);
+  </script>
+</html>

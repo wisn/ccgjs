@@ -12,13 +12,21 @@
   },
   "scripts": {
     "start": "tsdx watch",
-    "build": "tsdx build",
+    "build": "tsdx build --format cjs,esm,umd",
     "test": "tsdx test",
     "lint": "tsdx lint",
     "prepare": "tsdx build",
     "size": "size-limit",
     "analyze": "size-limit --why",
-    "pegjs": "pegjs --plugin ts-pegjs --extra-options-file pegconfig.json -o src/generated.pegjs.ts --cache src/ccg.pegjs"
+    "pegjs": "pegjs --plugin ts-pegjs --extra-options-file pegconfig.json -o src/generated.pegjs.ts --cache src/ccg.pegjs",
+    "copy:cjs": "npm run copy:cjs:dev && npm run copy:cjs:prod",
+    "copy:cjs:dev": "cp dist/ccgjs.cjs.development.js cjs/ccgjs.js && cp dist/ccgjs.cjs.development.js.map cjs/",
+    "copy:cjs:prod": "cp dist/ccgjs.cjs.production.min.js cjs/ccgjs.min.js && cp dist/ccgjs.cjs.production.min.js.map cjs/",
+    "copy:umd": "npm run copy:umd:dev && npm run copy:umd:prod",
+    "copy:umd:dev": "cp dist/ccgjs.umd.development.js umd/ccgjs.js && cp dist/ccgjs.umd.development.js.map umd/",
+    "copy:umd:prod": "cp dist/ccgjs.umd.production.min.js umd/ccgjs.min.js && cp dist/ccgjs.umd.production.min.js.map umd/",
+    "copy:esm": "cp dist/ccgjs.esm.js esm/ccgjs.js && cp dist/ccgjs.esm.js.map esm/",
+    "distribute": "npm run copy:cjs && npm run copy:umd && npm run copy:esm"
   },
   "jest": {
     "collectCoverageFrom": [
@@ -39,14 +47,15 @@
   },
   "name": "ccgjs",
   "author": "Wisnu Adi Nurcahyo",
-  "module": "dist/ccgjs.esm.js",
+  "browser": "umd/ccgjs.js",
+  "module": "dist/ccgjs.cjs.js",
   "size-limit": [
     {
       "path": "dist/ccgjs.cjs.production.min.js",
       "limit": "10 KB"
     },
     {
-      "path": "dist/ccgjs.esm.js",
+      "path": "dist/ccgjs.umd.production.min.js",
       "limit": "10 KB"
     }
   ],

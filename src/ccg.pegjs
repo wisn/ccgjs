@@ -4,21 +4,29 @@
   }
 }
 
+Start = Tree
+
 Tree
-  = "(" node:NodeT _ left:Tree _ right:Tree ")" { return { node, left, right }; }
-  / "(" node:NodeT _ left:Tree _ "(" c:NodeL ")" ")" { return { node, left, right: { node: c } }; }
-  / "(" node:NodeT _ "(" c:NodeL ")" _ right:Tree ")" { return { node, left: { node: c }, right }; }
-  / "(" node:NodeT _ left:Tree ")" { return { node, left }; }
-  / "(" node:NodeT _ c:Node ")" { return { node, ...c }; }
+  = __ "(" node:NodeT left:Tree right:Tree ")" __
+    { return { node, left, right }; }
+  / __ "(" node:NodeT left:Tree "(" c:NodeL ")" __ ")" __
+    { return { node, left, right: { node: c } }; }
+  / __ "(" node:NodeT "(" c:NodeL ")" right:Tree ")" __
+    { return { node, left: { node: c }, right }; }
+  / __ "(" node:NodeT left:Tree ")" __
+    { return { node, left }; }
+  / __ "(" node:NodeT c:Node ")" __
+    { return { node, ...c }; }
 
 Node
-  = "(" c1:NodeL ")" _ "(" c2:NodeL ")" { return { left: { node: c1 }, right: { node: c2 } }; }
-  / "(" c:NodeL ")" { return { left: { node: c } }; }
+  = __ "(" c1:NodeL ")" __ "(" c2:NodeL ")" __
+    { return { left: { node: c1 }, right: { node: c2 } }; }
+  / __ "(" c:NodeL ")" __
+    { return { left: { node: c } }; }
 
 NodeT
-  = "<T" _ ccgCat:CCGCat _ head:Head _ dtrs:Dtrs ">" {
-    return { type: "T", ccgCat, head, dtrs };
-  }
+  = __ "<" __ "T" _ ccgCat:CCGCat _ head:Head _ dtrs:Dtrs __ ">" __
+    { return { type: "T", ccgCat, head, dtrs }; }
 
 Head
   = ("0" / "1") { return int(text()); }
@@ -27,9 +35,23 @@ Dtrs
   = ("0" / "1" / "2") { return int(text()); }
 
 NodeL
-  = "<L" _ ccgCat:CCGCat _ modPOSTag:POSTag _ origPOSTag:POSTag _ word:Word _ predArgCat:CCGCat ">" {
-    return { type: "L", ccgCat, modPOSTag, origPOSTag, word, predArgCat };
-  }
+  = __ "<" __ "L" _
+      ccgCat:CCGCat _
+      modPOSTag:POSTag _
+      origPOSTag:POSTag _
+      word:Word _
+      predArgCat:CCGCat __
+    ">" __
+    {
+      return {
+        type: "L",
+        ccgCat,
+        modPOSTag,
+        origPOSTag,
+        word,
+        predArgCat,
+      };
+    }
 
 CCGCat
   = ("(" CCGCat ")" RightCat
@@ -46,7 +68,7 @@ RightCat
   = "/" SingleCat / "\\" SingleCat
 
 SingleCat
-  = [A-Za-z]+ "[" [a-z]+ "]" / [A-Za-z]+
+  = [A-Za-z]+ "[" [A-Za-z,]+ "]" / [A-Za-z]+
 
 POSTag
   = [A-Z]+ { return text(); }
@@ -55,4 +77,7 @@ Word
   = [A-Za-z0-9]+ { return text(); }
 
 _ "whitespace"
-  = [ ]
+  = [ \t\n\r]+
+
+__ "whitespaces"
+  = [ \t\n\r]*
