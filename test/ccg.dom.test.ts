@@ -1,7 +1,7 @@
 import CCG from '../src';
 
 describe('ccg.dom', () => {
-  it('works', () => {
+  it('render table correctly', () => {
     const str = [
       '(<T Sf 1 2>',
       '(<T NP 0 2>',
@@ -31,26 +31,29 @@ describe('ccg.dom', () => {
       '<td class="ccgjs-operation"></td><td><hr></td><td class="ccgjs-operation">',
       '</td><td><hr></td><td class="ccgjs-operation"></td><td><hr></td>',
       '<td class="ccgjs-operation"></td></tr><tr class="ccgjs-derivation"><td>NP',
-      '<td class="ccgjs-operation"></td></td><td>NP\\NP<td class="ccgjs-operation">',
-      '</td></td><td>NP<td class="ccgjs-operation"></td></td><td>NP\\NP',
-      '<td class="ccgjs-operation"></td></td><td>NP/NP<td class="ccgjs-operation">',
-      '</td></td><td>NP<td class="ccgjs-operation"></td></td><td>((Sf\\NP)\\NP)\\NP',
-      '<td class="ccgjs-operation"></td></td></tr><tr class="ccgjs-ruler">',
-      '<td colspan="3"><hr></td><td class="ccgjs-operation">&gt;</td><td colspan="3">',
-      '<hr></td><td class="ccgjs-operation">&gt;</td><td colspan="3"><hr></td>',
+      '</td><td class="ccgjs-operation"></td><td>NP\\NP</td>',
+      '<td class="ccgjs-operation"></td><td>NP</td><td class="ccgjs-operation">',
+      '</td><td>NP\\NP</td><td class="ccgjs-operation"></td><td>NP/NP</td>',
+      '<td class="ccgjs-operation"></td><td>NP</td><td class="ccgjs-operation">',
+      '</td><td>((Sf\\NP)\\NP)\\NP</td><td class="ccgjs-operation"></td></tr>',
+      '<tr class="ccgjs-ruler"><td colspan="3"><hr></td>',
+      '<td class="ccgjs-operation">&gt;</td><td colspan="3"><hr></td>',
+      '<td class="ccgjs-operation">&gt;</td><td colspan="3"><hr></td>',
       '<td class="ccgjs-operation">&lt;</td><td colspan="2"></td></tr>',
-      '<tr class="ccgjs-derivation"><td colspan="3">NP<td class="ccgjs-operation">',
-      '</td></td><td colspan="3">NP<td class="ccgjs-operation"></td></td>',
-      '<td colspan="3">NP<td class="ccgjs-operation"></td></td><td colspan="2"></td>',
-      '</tr><tr class="ccgjs-ruler"><td colspan="8"></td><td colspan="5"><hr></td>',
+      '<tr class="ccgjs-derivation"><td colspan="3">NP</td>',
+      '<td class="ccgjs-operation"></td><td colspan="3">NP</td>',
+      '<td class="ccgjs-operation"></td><td colspan="3">NP</td>',
+      '<td class="ccgjs-operation"></td><td colspan="2"></td></tr>',
+      '<tr class="ccgjs-ruler"><td colspan="8"></td><td colspan="5"><hr></td>',
       '<td class="ccgjs-operation">&lt;</td></tr><tr class="ccgjs-derivation">',
-      '<td colspan="8"></td><td colspan="5">(Sf\\NP)\\NP<td class="ccgjs-operation">',
-      '</td></td></tr><tr class="ccgjs-ruler"><td colspan="4"></td><td colspan="9">',
-      '<hr></td><td class="ccgjs-operation">&lt;</td></tr><tr class="ccgjs-derivation">',
-      '<td colspan="4"></td><td colspan="9">Sf\\NP<td class="ccgjs-operation"></td></td>',
-      '</tr><tr class="ccgjs-ruler"><td colspan="13"><hr></td>',
+      '<td colspan="8"></td><td colspan="5">(Sf\\NP)\\NP</td>',
+      '<td class="ccgjs-operation"></td></tr><tr class="ccgjs-ruler">',
+      '<td colspan="4"></td><td colspan="9"><hr></td><td class="ccgjs-operation">',
+      '&lt;</td></tr><tr class="ccgjs-derivation"><td colspan="4"></td>',
+      '<td colspan="9">Sf\\NP</td><td class="ccgjs-operation"></td></tr>',
+      '<tr class="ccgjs-ruler"><td colspan="13"><hr></td>',
       '<td class="ccgjs-operation">&lt;</td></tr><tr class="ccgjs-derivation">',
-      '<td colspan="13">Sf<td class="ccgjs-operation"></td></td></tr></table>',
+      '<td colspan="13">Sf</td><td class="ccgjs-operation"></td></tr></table>',
     ].join('');
 
     expect(table.outerHTML).toStrictEqual(htmlStr);

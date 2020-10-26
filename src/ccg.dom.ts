@@ -95,7 +95,7 @@ export default class DOM {
         hrTr.appendChild(hrTd);
         hrTr.appendChild(oprTd);
         derivTr.appendChild(derivTd);
-        derivTd.appendChild(fakeOpr);
+        derivTr.appendChild(fakeOpr);
 
         lastTo = to;
       });

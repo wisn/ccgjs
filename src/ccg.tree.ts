@@ -4,9 +4,12 @@ import Reader, {
   MachineReadableCCG,
 } from './ccg.reader';
 
-export type NodeT = MachineReadableCCGNodeT;
+export type NodeT = MachineReadableCCGNodeT & { nIndex?: number };
 
-export type NodeL = MachineReadableCCGNodeL & { index?: number };
+export type NodeL = MachineReadableCCGNodeL & {
+  nIndex?: number;
+  wIndex?: number;
+};
 
 export type Node = {
   value: NodeT | NodeL;
@@ -33,6 +36,8 @@ export type Metadata = {
 
 export type IndexedWordMapper = { [key: number]: Node };
 
+export type ToStringOptions = { pretty?: boolean };
+
 export default class Tree {
   public root?: Node;
   public metadata?: Metadata;
@@ -53,10 +58,14 @@ export default class Tree {
     }
   }
 
-  public toString(): string {
+  public traverse(fn: Function): any {
+    return fn(this.root);
+  }
+
+  public toString(opts?: ToStringOptions): string {
     if (this.root) {
       this.stringBuilder = '';
-      this.toStringUtil(this.root);
+      this.toStringUtil(this.root, 0, opts);
 
       return this.stringBuilder.substring(1);
     }
@@ -105,15 +114,18 @@ export default class Tree {
       this.root = node;
     }
 
+    const nIndex = this.metadata?.nodes.length;
+    node.value.nIndex = nIndex;
     this.metadata?.nodes.push(node);
-    if (node.value.type === 'L') {
-      const nodeL: NodeL = node.value as NodeL;
-      const index = this.metadata!.words.length;
 
-      nodeL.index = index;
+    if (this.isNodeL(node)) {
+      const nodeL: NodeL = node.value as NodeL;
+      const wIndex = this.metadata!.words.length;
+
+      nodeL.wIndex = wIndex;
       this.metadata!.words.push(nodeL.word);
       this.metadata!.ccgCats.push(nodeL.ccgCat);
-      this.mappedIndexedWords![index] = node;
+      this.mappedIndexedWords![wIndex] = node;
 
       if (this.metadata?.sentence === '') {
         this.metadata!.sentence = nodeL.word;
@@ -136,8 +148,17 @@ export default class Tree {
     obj.right && this.buildTreeUtil(obj.right, level + 1, node, 'right');
   }
 
-  private toStringUtil(node: Node): void {
-    this.stringBuilder += ' (';
+  private toStringUtil(
+    node: Node,
+    level: number,
+    opts?: ToStringOptions
+  ): void {
+    if (opts?.pretty) {
+      const indents = 2 * level;
+      this.stringBuilder += '\n' + ' '.repeat(indents) + '(';
+    } else {
+      this.stringBuilder += ' (';
+    }
 
     if (this.isNodeT(node)) {
       const n: NodeT = node.value as NodeT;
@@ -161,8 +182,8 @@ export default class Tree {
       this.stringBuilder += '<ill-formed CCG Node>';
     }
 
-    node.left && this.toStringUtil(node.left);
-    node.right && this.toStringUtil(node.right);
+    node.left && this.toStringUtil(node.left, level + 1, opts);
+    node.right && this.toStringUtil(node.right, level + 1, opts);
 
     this.stringBuilder += ')';
   }
@@ -176,9 +197,9 @@ export default class Tree {
   }
 
   private buildDerivUtil(node: Node, dir?: string): Array<number> {
-    if (node.value.type === 'L') {
+    if (this.isNodeL(node)) {
       const nodeL: NodeL = node.value as NodeL;
-      const index = nodeL.index!;
+      const index = nodeL.wIndex!;
 
       const derivation: Derivation = {
         from: index,

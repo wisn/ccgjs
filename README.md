@@ -11,7 +11,30 @@ A combinatory categorial grammar (CCG) library for the web.
 
 ## Installation
 
+### Development
+
 Run `npm install` and we are all set.
+
+### Web Browser
+
+Include this library on your HTML file.
+
+```html
+<script type="text/javascript" src="/path/to/ccgjs"></script>
+```
+
+Replace `/path/to/ccgjs` with the CCGjs library URL.
+Then, use it:
+
+```html
+<script type="text/javascript">
+  const { CCG } = ccgjs;
+
+  // do something
+</script>
+```
+
+See `examples/index.html` as reference.
 
 ## Available APIs
 
@@ -198,6 +221,12 @@ released. We will add `CONTRIBUTING.md` after we are ready.
 
 Both issues and pull requests will be ignored.
 
+## Acknowledgements
+
+This JavaScript library is part of my undergraduate thesis.
+Hence, I would like to thank my supervisors
+([@aromadhony][2] and [@saidalfaraby][3]) for their advice and guidance.
+
 ## References
 
 Hockenmaier, J., & Steedman, M. (2007). CCGbank: A corpus of CCG derivations
@@ -213,3 +242,5 @@ _Lang Resources & Evaluation_ **52**, 67–100 (2018).
 Licensed under the [MIT License](LICENSE).
 
 [1]: https://github.com/wisn/ccgjs/tree/development
+[2]: https://github.com/aromadhony
+[3]: https://github.com/saidalfaraby
